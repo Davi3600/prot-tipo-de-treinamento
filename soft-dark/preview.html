@@ -4,10 +4,17 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
 <style>
 /* ==========================================================================
-   JD Sync — tema "Soft Dark" (v2)
+   JD Sync — temas "Soft Dark" (padrão) e "Campo" (claro, para uso sob sol)
    Camada visual apenas. Os seletores de componente usam as classes da prévia
    (soft-dark/preview.html); para aplicar no app real, mapeie-os para as
    classes existentes ou troque apenas os tokens de :root.
+
+   Troca de tema: data-sd-theme="campo" no <html> (ou em .sd-app).
+   Modo automático sugerido no app, seguindo o sistema (que no Android pode
+   alternar no nascer/pôr do sol):
+     const mq = matchMedia('(prefers-color-scheme: light)');
+     const aplicar = () => document.documentElement.dataset.sdTheme = mq.matches ? 'campo' : 'dark';
+     mq.addEventListener('change', aplicar); aplicar();
    ========================================================================== */
 
 :root {
@@ -43,6 +50,20 @@
   --sd-danger:       #e48369; /* coral: mais de 5 pts abaixo */
   --sd-danger-soft:  rgba(228, 131, 105, 0.15);
 
+  /* Camadas sobre o mapa */
+  --sd-overlay:   rgba(42, 40, 37, 0.9);
+  --sd-overlay-2: rgba(26, 25, 23, 0.78);
+
+  /* Simbologia do mapa — é dado, não tema: use os mesmos valores na camada
+     do mapa. Ajustados por tema só para manter 3:1 sobre o mapa base. */
+  --sd-sym-green: #56b28c;
+  --sd-sym-amber: #d9ab55;
+  --sd-sym-blue:  #8db1db;
+
+  /* Espessuras que o tema Campo engrossa */
+  --sd-indicator: 2px;
+  --sd-value-weight: 600;
+
   /* Profundidade */
   --sd-shadow-1: 0 1px 2px rgba(0, 0, 0, 0.30);
   --sd-shadow-2: 0 2px 6px rgba(0, 0, 0, 0.28), 0 12px 28px rgba(0, 0, 0, 0.30);
@@ -68,6 +89,60 @@
   --sd-font: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --sd-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
 }
+
+/* ==========================================================================
+   Tema Campo — claro, para uso sob sol
+   Sob luz direta o reflexo apaga sombras, tons sutis e cinzas médios.
+   Então: texto ≥ 7:1, bordas visíveis no lugar de sombra, estados com
+   contorno além da cor de fundo e indicadores mais grossos.
+   ========================================================================== */
+[data-sd-theme="campo"] {
+  color-scheme: light;
+
+  --sd-bg:          #e9e5dd;
+  --sd-surface:     #fdfcfa;
+  --sd-surface-2:   #f2efe9;
+  --sd-surface-3:   #e3ded5;
+  --sd-border:        rgba(45, 35, 20, 0.16);
+  --sd-border-strong: rgba(45, 35, 20, 0.30);
+
+  --sd-text:   #1a1814;  /* 17:1 no card */
+  --sd-text-2: #3b3731;  /* 11:1 */
+  --sd-text-3: #5a544b;  /* 7:1 */
+
+  --sd-accent:            #1d559c;
+  --sd-accent-fill:       #1d559c;
+  --sd-accent-fill-hover: #184a88;
+  --sd-accent-soft:       rgba(29, 85, 156, 0.12);
+  --sd-on-accent:         #ffffff;
+
+  --sd-success:      #125f41;
+  --sd-success-soft: rgba(18, 95, 65, 0.12);
+  --sd-warning:      #744b00;
+  --sd-warning-soft: rgba(168, 116, 15, 0.16);
+  --sd-danger:       #9a321b;
+  --sd-danger-soft:  rgba(154, 50, 27, 0.12);
+
+  --sd-overlay:   rgba(253, 252, 250, 0.96);
+  --sd-overlay-2: rgba(253, 252, 250, 0.9);
+
+  --sd-sym-green: #2e8f66;
+  --sd-sym-amber: #a8740f;
+  --sd-sym-blue:  #2f6fb8;
+
+  --sd-indicator: 3px;
+  --sd-value-weight: 700;
+
+  --sd-shadow-1: 0 1px 2px rgba(45, 35, 20, 0.10);
+  --sd-shadow-2: 0 1px 3px rgba(45, 35, 20, 0.14), 0 6px 16px rgba(45, 35, 20, 0.10);
+  --sd-inner-hl: inset 0 0 0 0 transparent;
+}
+/* No sol, fundo tingido some: estados ganham contorno na própria cor. */
+[data-sd-theme="campo"] .sd-pill,
+[data-sd-theme="campo"] .sd-sync { box-shadow: inset 0 0 0 1px currentColor; }
+[data-sd-theme="campo"] .sd-card,
+[data-sd-theme="campo"] .sd-map { border-color: var(--sd-border-strong); }
+[data-sd-theme="campo"] .sd-tab[aria-selected="true"] { font-weight: 600; }
 
 /* ---------- Base ---------- */
 .sd-app {
@@ -102,9 +177,12 @@
   box-shadow: var(--sd-inner-hl);
 }
 .sd-brand__name { font-weight: 600; font-size: var(--sd-fs-md); letter-spacing: -0.01em; }
+.sd-brand > div { min-width: 0; }
+.sd-brand__name, .sd-brand__by { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .sd-brand__by { font-size: var(--sd-fs-xs); color: var(--sd-text-3); }
 
 .sd-chip {
+  flex: none;
   display: inline-flex; align-items: center; gap: 6px;
   height: 32px; padding: 0 12px;
   border-radius: var(--sd-r-pill);
@@ -116,6 +194,7 @@
 }
 .sd-chip--code { font-family: var(--sd-mono); color: var(--sd-text); }
 .sd-avatar {
+  flex: none;
   width: 32px; height: 32px; border-radius: 50%;
   display: grid; place-items: center;
   background: var(--sd-surface-3); color: var(--sd-text);
@@ -142,7 +221,7 @@
 
 /* ---------- Busca ---------- */
 .sd-search {
-  display: flex; align-items: center; gap: 10px;
+  display: flex; align-items: center; gap: 10px; min-width: 0;
   height: var(--sd-tap); padding: 0 14px;
   background: var(--sd-surface-2);
   border: 1px solid var(--sd-border);
@@ -170,7 +249,7 @@
   position: absolute; right: 8px;
   width: 44px; height: 44px; border-radius: 50%;
   display: grid; place-items: center;
-  background: rgba(42, 40, 37, 0.9);
+  background: var(--sd-overlay);
   backdrop-filter: blur(6px);
   border: 1px solid var(--sd-border-strong);
   color: var(--sd-text);
@@ -182,7 +261,7 @@
 .sd-map__attr {
   position: absolute; left: 8px; bottom: 8px; right: 60px;
   font-size: 10px; color: var(--sd-text-3);
-  background: rgba(26, 25, 23, 0.78);
+  background: var(--sd-overlay-2);
   padding: 3px 8px; border-radius: var(--sd-r-field);
 }
 
@@ -207,7 +286,7 @@
 .sd-tab[aria-selected="true"] { color: var(--sd-text); }
 .sd-tab[aria-selected="true"]::after {
   content: ""; position: absolute; left: 12px; right: 12px; bottom: -1px;
-  height: 2px; border-radius: 2px;
+  height: var(--sd-indicator); border-radius: 2px;
   background: var(--sd-accent);
 }
 
@@ -322,7 +401,7 @@
 .sd-metric { display: grid; gap: 8px; padding: 14px; }
 .sd-metric__label { font-size: var(--sd-fs-xs); font-weight: 500; color: var(--sd-text-2); }
 .sd-metric__value {
-  font-size: var(--sd-fs-xl); font-weight: 600; line-height: 1; letter-spacing: -0.02em;
+  font-size: var(--sd-fs-xl); font-weight: var(--sd-value-weight); line-height: 1; letter-spacing: -0.02em;
   font-variant-numeric: tabular-nums;
 }
 .sd-metric__value small { font-size: var(--sd-fs-md); font-weight: 500; margin-left: 1px; }
@@ -365,7 +444,7 @@
 .sd-bottomnav__item:active { background: var(--sd-surface-2); }
 .sd-bottomnav__item[aria-current="page"] { color: var(--sd-text); }
 .sd-bottomnav__item[aria-current="page"]::before {
-  content: ""; position: absolute; top: -4px; width: 24px; height: 2px;
+  content: ""; position: absolute; top: -4px; width: 24px; height: var(--sd-indicator);
   border-radius: 2px; background: var(--sd-accent);
 }
 .sd-bottomnav__item[aria-current="page"] svg { color: var(--sd-accent); }
@@ -377,7 +456,21 @@
 }
 
 /* ---------- Página de apresentação (não faz parte do tema) ---------- */
-html, body { background: #131210; }
+:root {
+  --pg-bg: #131210;
+  --bm-bg: #262421; --bm-water: #2f3a44; --bm-street: #3a3733;
+  --bm-road-o: #6b5a3e; --bm-road: #8c7550; --bm-label: #8a847a;
+}
+[data-sd-theme="campo"] {
+  --pg-bg: #d4cfc5;
+  --bm-bg: #f1eee8; --bm-water: #a9c3d8; --bm-street: #d6d0c5;
+  --bm-road-o: #c9a45c; --bm-road: #efd9a6; --bm-label: #5a544b;
+}
+html, body { background: var(--pg-bg); transition: background .25s; }
+.switch { display: inline-flex; padding: 4px; gap: 4px; border-radius: 12px; background: var(--sd-surface); border: 1px solid var(--sd-border-strong); justify-self: start; }
+.switch button { min-height: 44px; padding: 0 16px; border: 0; border-radius: 9px; background: none; color: var(--sd-text-2); font: inherit; font-size: 14px; font-weight: 500; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; }
+.switch button[aria-pressed="true"] { background: var(--sd-accent-fill); color: var(--sd-on-accent); }
+[data-sd-theme="campo"] .pal-dark, :root:not([data-sd-theme="campo"]) .pal-campo { display: none; }
 body { color: var(--sd-text); font-family: var(--sd-font); padding-inline: 16px; }
 .page { max-width: 1080px; margin: 0 auto; padding-block: 32px 56px; display: grid; gap: 36px; }
 .intro { display: grid; gap: 10px; max-width: 640px; }
@@ -389,7 +482,7 @@ body { color: var(--sd-text); font-family: var(--sd-font); padding-inline: 16px;
 .phone-wrap { display: grid; gap: 10px; justify-items: center; }
 .phone-cap { font-size: 13px; color: var(--sd-text-3); }
 .phone {
-  width: 360px; max-width: 100%;
+  width: 375px; max-width: 100%;
   height: 740px;
   border-radius: 34px;
   padding: 8px;
@@ -468,36 +561,42 @@ body { color: var(--sd-text); font-family: var(--sd-font); padding-inline: 16px;
     <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="3.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M5 20a7 7 0 0 1 14 0" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
     <symbol id="i-reopen" viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.3-5.7L4 8.5M4 4v4.5h4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
 
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M5.3 18.7l1.8-1.8M16.9 7.1l1.8-1.8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
     <symbol id="basemap" viewBox="0 0 340 200">
-      <rect width="340" height="200" fill="#262421"/>
-      <path d="M120 0c-6 30-40 40-60 70s-20 60-60 80" stroke="#2f3a44" stroke-width="5" fill="none"/>
-      <g stroke="#3a3733" stroke-width="2.2" fill="none" stroke-linecap="round">
+      <rect width="340" height="200" style="fill:var(--bm-bg)"/>
+      <path d="M120 0c-6 30-40 40-60 70s-20 60-60 80" style="stroke:var(--bm-water)" stroke-width="5" fill="none"/>
+      <g style="stroke:var(--bm-street)" stroke-width="2.2" fill="none" stroke-linecap="round">
         <path d="M20 20 70 60 60 120 30 170"/><path d="M90 10l10 60 40 30 10 80"/><path d="M160 0v70l-20 40"/>
         <path d="M200 10l20 60-10 60 20 70"/><path d="M250 0l-10 50 30 40"/><path d="M290 20l10 60-30 60"/>
         <path d="M0 140h80l40 20 60-10"/><path d="M200 150l60-20 80 10"/><path d="M40 40h60M120 130l60 20"/>
         <path d="M260 20l40 30M230 170l30-30"/>
       </g>
-      <path d="M-5 60c60 5 120 15 180 25s110 10 170 20" stroke="#6b5a3e" stroke-width="7" fill="none" stroke-linecap="round"/>
-      <path d="M-5 60c60 5 120 15 180 25s110 10 170 20" stroke="#8c7550" stroke-width="3.5" fill="none" stroke-linecap="round"/>
-      <path d="M60 200c40-50 80-80 140-95s100-5 145 0" stroke="#6b5a3e" stroke-width="6" fill="none" stroke-linecap="round"/>
-      <path d="M60 200c40-50 80-80 140-95s100-5 145 0" stroke="#8c7550" stroke-width="3" fill="none" stroke-linecap="round"/>
-      <g fill="#8a847a" font-family="IBM Plex Sans, sans-serif" font-size="9">
+      <path d="M-5 60c60 5 120 15 180 25s110 10 170 20" style="stroke:var(--bm-road-o)" stroke-width="7" fill="none" stroke-linecap="round"/>
+      <path d="M-5 60c60 5 120 15 180 25s110 10 170 20" style="stroke:var(--bm-road)" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+      <path d="M60 200c40-50 80-80 140-95s100-5 145 0" style="stroke:var(--bm-road-o)" stroke-width="6" fill="none" stroke-linecap="round"/>
+      <path d="M60 200c40-50 80-80 140-95s100-5 145 0" style="stroke:var(--bm-road)" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <g style="fill:var(--bm-label)" font-family="IBM Plex Sans, sans-serif" font-size="9">
         <text x="30" y="98">São Paulo</text><text x="118" y="72">Rua B</text><text x="170" y="95" transform="rotate(8 170 95)">BA-046</text><text x="140" y="140">Rua E</text>
       </g>
-      <g fill="#56b28c" stroke="#1a1917" stroke-width="1">
+      <g style="fill:var(--sd-sym-green);stroke:var(--bm-bg)" stroke-width="1">
         <path d="M100 76l5 9h-10z"/><path d="M196 74l5 9h-10z"/><path d="M240 100l5 9h-10z"/><path d="M130 120l5 9h-10z"/><path d="M60 50l5 9h-10z"/><path d="M280 60l5 9h-10z"/>
       </g>
-      <g fill="#d9ab55" stroke="#1a1917" stroke-width="1"><path d="M210 140l5 9h-10z"/><path d="M75 150l5 9h-10z"/></g>
-      <circle cx="222" cy="93" r="5" fill="none" stroke="#8db1db" stroke-width="2"/>
+      <g style="fill:var(--sd-sym-amber);stroke:var(--bm-bg)" stroke-width="1"><path d="M210 140l5 9h-10z"/><path d="M75 150l5 9h-10z"/></g>
+      <circle cx="222" cy="93" r="5" fill="none" style="stroke:var(--sd-sym-blue)" stroke-width="2"/>
     </symbol>
   </defs>
 </svg>
 
 <main class="page">
   <header class="intro">
-    <h1>JD Sync em Soft Dark</h1>
-    <p>Segunda versão: contraste corrigido, camadas pela superfície, status em três níveis, alvos de toque de 48 px e estados de sincronização. As abas dos celulares são clicáveis: troque entre Leitura e EGE.</p>
-    <p class="note">A tela de EGE foi inferida a partir da sua descrição, porque ela não aparece no print. Os números são de exemplo.</p>
+    <h1>JD Sync: tema Campo e Soft Dark</h1>
+    <p>O tema Campo é a versão clara, feita para uso sob sol: texto a 17:1, estados com contorno além da cor e indicadores mais grossos. O Soft Dark continua para uso à noite ou em ambiente fechado. Os dois usam o mesmo CSS; só os tokens mudam.</p>
+    <div class="switch" role="group" aria-label="Tema">
+      <button type="button" data-set="campo"><svg width="18" height="18"><use href="#i-sun"/></svg>Campo</button>
+      <button type="button" data-set="dark"><svg width="18" height="18"><use href="#i-moon"/></svg>Soft Dark</button>
+    </div>
+    <p class="note">A tela de EGE foi inferida a partir da sua descrição. Os números são de exemplo.</p>
   </header>
 
   <section class="phones">
@@ -570,10 +669,10 @@ body { color: var(--sd-text); font-family: var(--sd-font); padding-inline: 16px;
                     </div>
                   </div>
                   <div class="sd-legend">
-                    <div class="sd-legend__row is-active"><svg width="18" height="16" viewBox="0 0 18 16"><path d="M9 1l8 14H1z" fill="#56b28c"/><path d="M9 6l3.5 6h-7z" fill="#2a2825"/></svg>Transformador CIA<span class="sd-legend__count">2015</span><span class="sd-legend__eye"><svg width="16" height="16"><use href="#i-eye"/></svg></span></div>
-                    <div class="sd-legend__row"><svg width="18" height="16" viewBox="0 0 18 16"><path d="M9 1l8 14H1z" fill="#56b28c"/></svg>Transformador particular<span class="sd-legend__count">213</span><span class="sd-legend__eye"><svg width="16" height="16"><use href="#i-eye"/></svg></span></div>
-                    <div class="sd-legend__row"><svg width="18" height="16" viewBox="0 0 18 16"><path d="M9 1l8 14H1z" fill="#d9ab55"/></svg>Transformador exclusivo<span class="sd-legend__count">104</span><span class="sd-legend__eye"><svg width="16" height="16"><use href="#i-eye"/></svg></span></div>
-                    <div class="sd-legend__row is-hidden"><svg width="18" height="16" viewBox="0 0 18 16"><circle cx="9" cy="8" r="5" fill="none" stroke="#8db1db" stroke-width="2"/></svg>Chave fusível<span class="sd-legend__count">486</span><span class="sd-legend__eye"><svg width="16" height="16"><use href="#i-eyeoff"/></svg></span></div>
+                    <div class="sd-legend__row is-active"><svg width="18" height="16" viewBox="0 0 18 16"><path d="M9 1l8 14H1z" style="fill:var(--sd-sym-green)"/><path d="M9 6l3.5 6h-7z" style="fill:var(--sd-surface)"/></svg>Transformador CIA<span class="sd-legend__count">2015</span><span class="sd-legend__eye"><svg width="16" height="16"><use href="#i-eye"/></svg></span></div>
+                    <div class="sd-legend__row"><svg width="18" height="16" viewBox="0 0 18 16"><path d="M9 1l8 14H1z" style="fill:var(--sd-sym-green)"/></svg>Transformador particular<span class="sd-legend__count">213</span><span class="sd-legend__eye"><svg width="16" height="16"><use href="#i-eye"/></svg></span></div>
+                    <div class="sd-legend__row"><svg width="18" height="16" viewBox="0 0 18 16"><path d="M9 1l8 14H1z" style="fill:var(--sd-sym-amber)"/></svg>Transformador exclusivo<span class="sd-legend__count">104</span><span class="sd-legend__eye"><svg width="16" height="16"><use href="#i-eye"/></svg></span></div>
+                    <div class="sd-legend__row is-hidden"><svg width="18" height="16" viewBox="0 0 18 16"><circle cx="9" cy="8" r="5" fill="none" style="stroke:var(--sd-sym-blue)" stroke-width="2"/></svg>Chave fusível<span class="sd-legend__count">486</span><span class="sd-legend__eye"><svg width="16" height="16"><use href="#i-eyeoff"/></svg></span></div>
                   </div>
                 </div>
               </section>
@@ -686,7 +785,21 @@ body { color: var(--sd-text); font-family: var(--sd-font); padding-inline: 16px;
 
   <section>
     <h2 class="h2">Paleta</h2>
-    <div class="swatches">
+    <div class="swatches pal-campo">
+      <div class="sw"><i style="background:#e9e5dd"></i>Fundo<span>#E9E5DD</span></div>
+      <div class="sw"><i style="background:#fdfcfa"></i>Card<span>#FDFCFA</span></div>
+      <div class="sw"><i style="background:#f2efe9"></i>Campo<span>#F2EFE9</span></div>
+      <div class="sw"><i style="background:#e3ded5"></i>Pressionado<span>#E3DED5</span></div>
+      <div class="sw"><i style="background:#1a1814"></i>Texto · 17:1<span>#1A1814</span></div>
+      <div class="sw"><i style="background:#5a544b"></i>Texto terciário · 7:1<span>#5A544B</span></div>
+      <div class="sw"><i style="background:#1d559c"></i>Destaque<span>#1D559C</span></div>
+      <div class="sw"><i style="background:#125f41"></i>Meta batida<span>#125F41</span></div>
+      <div class="sw"><i style="background:#744b00"></i>Até 5 pts abaixo<span>#744B00</span></div>
+      <div class="sw"><i style="background:#9a321b"></i>Mais de 5 pts abaixo<span>#9A321B</span></div>
+      <div class="sw"><i style="background:#2e8f66"></i>Símbolo verde (mapa)<span>#2E8F66</span></div>
+      <div class="sw"><i style="background:#a8740f"></i>Símbolo âmbar (mapa)<span>#A8740F</span></div>
+    </div>
+    <div class="swatches pal-dark">
       <div class="sw"><i style="background:#1a1917"></i>Nível 0 · fundo<span>#1A1917</span></div>
       <div class="sw"><i style="background:#2a2825"></i>Nível 1 · card<span>#2A2825</span></div>
       <div class="sw"><i style="background:#33302c"></i>Nível 2 · campo<span>#33302C</span></div>
@@ -698,34 +811,47 @@ body { color: var(--sd-text); font-family: var(--sd-font); padding-inline: 16px;
       <div class="sw"><i style="background:#56b28c"></i>Meta batida<span>#56B28C</span></div>
       <div class="sw"><i style="background:#d9ab55"></i>Até 5 pts abaixo<span>#D9AB55</span></div>
       <div class="sw"><i style="background:#e48369"></i>Mais de 5 pts abaixo<span>#E48369</span></div>
-      <div class="sw"><i style="background:#a39c91;opacity:.35"></i>Offline<span>sem cor</span></div>
+      <div class="sw"><i style="background:#56b28c"></i>Símbolo verde (mapa)<span>#56B28C</span></div>
     </div>
   </section>
 
   <section class="notes">
     <div class="sd-card">
-      <h2>O que mudou nesta versão</h2>
+      <h2>O que o tema Campo muda</h2>
       <ul>
-        <li>Botão primário a 5,4:1 e texto terciário a 4,8:1 no campo de busca. Os dois falhavam antes.</li>
-        <li>Profundidade pela superfície: cada nível clareia. A sombra ficou só de apoio.</li>
-        <li>Verde saiu da marca. O logo é neutro e o verde só quer dizer meta batida.</li>
-        <li>Status em três níveis: esmeralda, âmbar e coral.</li>
-        <li>Tudo que se toca tem 44 a 48 px de altura, e responde ao toque.</li>
-        <li>Chip de sincronização com cinco estados. O offline é o mais apagado de propósito.</li>
+        <li>Texto principal a 17:1 e terciário a 7:1. No escuro o mínimo era 4,5:1; no sol isso não basta.</li>
+        <li>Status em tons mais fechados (verde, âmbar e terracota), todos acima de 7:1 no card.</li>
+        <li>Pílulas e chip de sincronização com contorno. O fundo tingido some no reflexo, o contorno não.</li>
+        <li>Indicador de aba e da navegação com 3 px, e números das métricas em negrito.</li>
+        <li>Bordas mais fortes no lugar de sombra, que não aparece sob luz direta.</li>
+        <li>Símbolos do mapa escurecidos para ficar acima de 3:1 sobre o mapa claro.</li>
       </ul>
     </div>
     <div class="sd-card crit">
-      <h2>O que o CSS não resolve</h2>
+      <h2>O que ainda depende do app</h2>
       <ul>
-        <li>Uso sob sol ainda pede um tema claro de alto contraste.</li>
-        <li>O mapa só fica escuro no app se você trocar a camada base.</li>
-        <li>A aba Leitura abre em "Importar arquivos", que é ação de uma vez. Isso é estrutura, não estilo.</li>
+        <li>O mapa base precisa acompanhar o tema: OSM claro no Campo, base escura à noite.</li>
+        <li>Se os símbolos mudam de tom por tema, a camada do mapa tem que ler os mesmos tokens. Senão legenda e mapa ficam diferentes.</li>
+        <li>O brilho de tela do aparelho pesa mais que o tema. Em campo, brilho no máximo.</li>
       </ul>
     </div>
   </section>
 </main>
 
 <script>
+(function () {
+  const root = document.documentElement;
+  const btns = document.querySelectorAll('[data-set]');
+  function setTheme(t) {
+    root.dataset.sdTheme = t;
+    btns.forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.set === t)); });
+    try { localStorage.setItem('jd-theme', t); } catch (e) {}
+  }
+  let saved = null;
+  try { saved = localStorage.getItem('jd-theme'); } catch (e) {}
+  setTheme(saved === 'dark' ? 'dark' : 'campo');
+  btns.forEach(function (b) { b.addEventListener('click', function () { setTheme(b.dataset.set); }); });
+})();
 (function () {
   const tpl = document.getElementById('phone-tpl');
   const host = tpl.parentElement;

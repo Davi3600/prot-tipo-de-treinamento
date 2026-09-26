@@ -1,8 +1,15 @@
 /* ==========================================================================
-   JD Sync — tema "Soft Dark" (v2)
+   JD Sync — temas "Soft Dark" (padrão) e "Campo" (claro, para uso sob sol)
    Camada visual apenas. Os seletores de componente usam as classes da prévia
    (soft-dark/preview.html); para aplicar no app real, mapeie-os para as
    classes existentes ou troque apenas os tokens de :root.
+
+   Troca de tema: data-sd-theme="campo" no <html> (ou em .sd-app).
+   Modo automático sugerido no app, seguindo o sistema (que no Android pode
+   alternar no nascer/pôr do sol):
+     const mq = matchMedia('(prefers-color-scheme: light)');
+     const aplicar = () => document.documentElement.dataset.sdTheme = mq.matches ? 'campo' : 'dark';
+     mq.addEventListener('change', aplicar); aplicar();
    ========================================================================== */
 
 :root {
@@ -38,6 +45,20 @@
   --sd-danger:       #e48369; /* coral: mais de 5 pts abaixo */
   --sd-danger-soft:  rgba(228, 131, 105, 0.15);
 
+  /* Camadas sobre o mapa */
+  --sd-overlay:   rgba(42, 40, 37, 0.9);
+  --sd-overlay-2: rgba(26, 25, 23, 0.78);
+
+  /* Simbologia do mapa — é dado, não tema: use os mesmos valores na camada
+     do mapa. Ajustados por tema só para manter 3:1 sobre o mapa base. */
+  --sd-sym-green: #56b28c;
+  --sd-sym-amber: #d9ab55;
+  --sd-sym-blue:  #8db1db;
+
+  /* Espessuras que o tema Campo engrossa */
+  --sd-indicator: 2px;
+  --sd-value-weight: 600;
+
   /* Profundidade */
   --sd-shadow-1: 0 1px 2px rgba(0, 0, 0, 0.30);
   --sd-shadow-2: 0 2px 6px rgba(0, 0, 0, 0.28), 0 12px 28px rgba(0, 0, 0, 0.30);
@@ -63,6 +84,60 @@
   --sd-font: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --sd-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
 }
+
+/* ==========================================================================
+   Tema Campo — claro, para uso sob sol
+   Sob luz direta o reflexo apaga sombras, tons sutis e cinzas médios.
+   Então: texto ≥ 7:1, bordas visíveis no lugar de sombra, estados com
+   contorno além da cor de fundo e indicadores mais grossos.
+   ========================================================================== */
+[data-sd-theme="campo"] {
+  color-scheme: light;
+
+  --sd-bg:          #e9e5dd;
+  --sd-surface:     #fdfcfa;
+  --sd-surface-2:   #f2efe9;
+  --sd-surface-3:   #e3ded5;
+  --sd-border:        rgba(45, 35, 20, 0.16);
+  --sd-border-strong: rgba(45, 35, 20, 0.30);
+
+  --sd-text:   #1a1814;  /* 17:1 no card */
+  --sd-text-2: #3b3731;  /* 11:1 */
+  --sd-text-3: #5a544b;  /* 7:1 */
+
+  --sd-accent:            #1d559c;
+  --sd-accent-fill:       #1d559c;
+  --sd-accent-fill-hover: #184a88;
+  --sd-accent-soft:       rgba(29, 85, 156, 0.12);
+  --sd-on-accent:         #ffffff;
+
+  --sd-success:      #125f41;
+  --sd-success-soft: rgba(18, 95, 65, 0.12);
+  --sd-warning:      #744b00;
+  --sd-warning-soft: rgba(168, 116, 15, 0.16);
+  --sd-danger:       #9a321b;
+  --sd-danger-soft:  rgba(154, 50, 27, 0.12);
+
+  --sd-overlay:   rgba(253, 252, 250, 0.96);
+  --sd-overlay-2: rgba(253, 252, 250, 0.9);
+
+  --sd-sym-green: #2e8f66;
+  --sd-sym-amber: #a8740f;
+  --sd-sym-blue:  #2f6fb8;
+
+  --sd-indicator: 3px;
+  --sd-value-weight: 700;
+
+  --sd-shadow-1: 0 1px 2px rgba(45, 35, 20, 0.10);
+  --sd-shadow-2: 0 1px 3px rgba(45, 35, 20, 0.14), 0 6px 16px rgba(45, 35, 20, 0.10);
+  --sd-inner-hl: inset 0 0 0 0 transparent;
+}
+/* No sol, fundo tingido some: estados ganham contorno na própria cor. */
+[data-sd-theme="campo"] .sd-pill,
+[data-sd-theme="campo"] .sd-sync { box-shadow: inset 0 0 0 1px currentColor; }
+[data-sd-theme="campo"] .sd-card,
+[data-sd-theme="campo"] .sd-map { border-color: var(--sd-border-strong); }
+[data-sd-theme="campo"] .sd-tab[aria-selected="true"] { font-weight: 600; }
 
 /* ---------- Base ---------- */
 .sd-app {
@@ -97,9 +172,12 @@
   box-shadow: var(--sd-inner-hl);
 }
 .sd-brand__name { font-weight: 600; font-size: var(--sd-fs-md); letter-spacing: -0.01em; }
+.sd-brand > div { min-width: 0; }
+.sd-brand__name, .sd-brand__by { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .sd-brand__by { font-size: var(--sd-fs-xs); color: var(--sd-text-3); }
 
 .sd-chip {
+  flex: none;
   display: inline-flex; align-items: center; gap: 6px;
   height: 32px; padding: 0 12px;
   border-radius: var(--sd-r-pill);
@@ -111,6 +189,7 @@
 }
 .sd-chip--code { font-family: var(--sd-mono); color: var(--sd-text); }
 .sd-avatar {
+  flex: none;
   width: 32px; height: 32px; border-radius: 50%;
   display: grid; place-items: center;
   background: var(--sd-surface-3); color: var(--sd-text);
@@ -137,7 +216,7 @@
 
 /* ---------- Busca ---------- */
 .sd-search {
-  display: flex; align-items: center; gap: 10px;
+  display: flex; align-items: center; gap: 10px; min-width: 0;
   height: var(--sd-tap); padding: 0 14px;
   background: var(--sd-surface-2);
   border: 1px solid var(--sd-border);
@@ -165,7 +244,7 @@
   position: absolute; right: 8px;
   width: 44px; height: 44px; border-radius: 50%;
   display: grid; place-items: center;
-  background: rgba(42, 40, 37, 0.9);
+  background: var(--sd-overlay);
   backdrop-filter: blur(6px);
   border: 1px solid var(--sd-border-strong);
   color: var(--sd-text);
@@ -177,7 +256,7 @@
 .sd-map__attr {
   position: absolute; left: 8px; bottom: 8px; right: 60px;
   font-size: 10px; color: var(--sd-text-3);
-  background: rgba(26, 25, 23, 0.78);
+  background: var(--sd-overlay-2);
   padding: 3px 8px; border-radius: var(--sd-r-field);
 }
 
@@ -202,7 +281,7 @@
 .sd-tab[aria-selected="true"] { color: var(--sd-text); }
 .sd-tab[aria-selected="true"]::after {
   content: ""; position: absolute; left: 12px; right: 12px; bottom: -1px;
-  height: 2px; border-radius: 2px;
+  height: var(--sd-indicator); border-radius: 2px;
   background: var(--sd-accent);
 }
 
@@ -317,7 +396,7 @@
 .sd-metric { display: grid; gap: 8px; padding: 14px; }
 .sd-metric__label { font-size: var(--sd-fs-xs); font-weight: 500; color: var(--sd-text-2); }
 .sd-metric__value {
-  font-size: var(--sd-fs-xl); font-weight: 600; line-height: 1; letter-spacing: -0.02em;
+  font-size: var(--sd-fs-xl); font-weight: var(--sd-value-weight); line-height: 1; letter-spacing: -0.02em;
   font-variant-numeric: tabular-nums;
 }
 .sd-metric__value small { font-size: var(--sd-fs-md); font-weight: 500; margin-left: 1px; }
@@ -360,7 +439,7 @@
 .sd-bottomnav__item:active { background: var(--sd-surface-2); }
 .sd-bottomnav__item[aria-current="page"] { color: var(--sd-text); }
 .sd-bottomnav__item[aria-current="page"]::before {
-  content: ""; position: absolute; top: -4px; width: 24px; height: 2px;
+  content: ""; position: absolute; top: -4px; width: 24px; height: var(--sd-indicator);
   border-radius: 2px; background: var(--sd-accent);
 }
 .sd-bottomnav__item[aria-current="page"] svg { color: var(--sd-accent); }
