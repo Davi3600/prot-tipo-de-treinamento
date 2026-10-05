@@ -85,6 +85,18 @@ Negative prompt:
 text, letters, words, writing, typography, printed text on ribbon, embroidered letters, pattern on ribbon, logo, badge, label, watermark, subtitles, distorted hands, extra fingers, deformed fingers, deformed faces, sad, crying, hospital, nudity, dark lighting, low quality, cartoon, flickering
 ```
 
+## Opção D3 — 8 s, laço cruzado (correção da forma)
+
+A D2 dizia "ribbon loop" e saiu uma alça simples. Aqui a forma do laço cruzado é descrita e a mão toca no topo, sem cobrir o cruzamento.
+
+```
+One continuous 8-second shot, no cuts. Starts with a close-up of a classic folded pink satin ribbon pin on a woman's white blouse: a single short ribbon folded into a loop at the top, with its two ends crossing over each other in the middle and the two tails hanging down diagonally to the left and right, forming an upside-down V below the crossing. The ribbon is solid pink, smooth and blank. The woman's fingertips gently touch the top of the loop, leaving the crossing and both tails clearly visible. The camera smoothly and slowly pulls back and rises, revealing her smiling, standing outdoors in a sunny city park beside a diverse group of Brazilian women of different ages and skin tones, each wearing something pink: a pink headscarf, a pink scarf, a pink blouse. They smile warmly and put their arms around each other. Golden-hour light, pink and white palette, shallow depth of field, hopeful mood, photorealistic, cinematic commercial look, empty space on the right side of the frame at the end.
+```
+
+Negative prompt: o mesmo da D2, acrescentando `straight ribbon, simple loop, uncrossed ribbon, bow, hand covering the ribbon`.
+
+Se ainda errar a forma, use image-to-video com uma foto real do laço dobrado.
+
 ---
 
 ## Checklist antes de publicar
