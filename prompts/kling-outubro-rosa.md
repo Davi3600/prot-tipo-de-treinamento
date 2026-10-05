@@ -71,6 +71,20 @@ Funciona em qualquer modelo, inclusive nos que não têm multi-shot. Se a duraç
 One continuous 8-second shot, no cuts. Starts with an extreme close-up of a woman's hand gently touching a pink satin awareness ribbon pinned on her white blouse. The camera smoothly and slowly pulls back and rises, revealing her smiling, standing outdoors in a sunny city park beside a diverse group of Brazilian women of different ages and skin tones, each wearing something pink: a pink headscarf, a pink scarf, a pink blouse, pink ribbons. They smile warmly and put their arms around each other. Golden-hour light, pink and white palette, shallow depth of field, hopeful and empowering mood, photorealistic, cinematic commercial look, empty space on the right side of the frame at the end.
 ```
 
+## Opção D2 — 8 s, laço sem letras (correção)
+
+O termo "awareness ribbon" puxa laços de campanha com texto impresso. Aqui o laço é descrito como objeto liso e sem estampa.
+
+```
+One continuous 8-second shot, no cuts. Starts with an extreme close-up of a woman's hand gently touching a small plain pink satin ribbon loop pinned on her white blouse; the ribbon is solid pink, smooth and completely blank, with no print, no pattern and no writing. The camera smoothly and slowly pulls back and rises, revealing her smiling, standing outdoors in a sunny city park beside a diverse group of Brazilian women of different ages and skin tones, each wearing something pink: a pink headscarf, a pink scarf, a pink blouse. They smile warmly and put their arms around each other. Golden-hour light, pink and white palette, shallow depth of field, hopeful mood, photorealistic, cinematic commercial look, empty space on the right side of the frame at the end.
+```
+
+Negative prompt:
+
+```
+text, letters, words, writing, typography, printed text on ribbon, embroidered letters, pattern on ribbon, logo, badge, label, watermark, subtitles, distorted hands, extra fingers, deformed fingers, deformed faces, sad, crying, hospital, nudity, dark lighting, low quality, cartoon, flickering
+```
+
 ---
 
 ## Checklist antes de publicar
