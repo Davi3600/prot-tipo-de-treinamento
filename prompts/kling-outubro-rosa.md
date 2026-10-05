@@ -63,6 +63,14 @@ Shot 2 (5-10s): Cut to a group of diverse Brazilian women of different ages, bod
 Shot 3 (10-15s): Cut to a medium shot of a mature woman and a young woman from the group embracing warmly and smiling, both wearing pink ribbons, soft pink bokeh background, slow camera pull-back leaving empty space on the right side of the frame.
 ```
 
+## Opção D — 8 s, plano gratuito (um plano contínuo, sem cortes)
+
+Funciona em qualquer modelo, inclusive nos que não têm multi-shot. Se a duração de 8 s não estiver disponível, gere 10 s e corte na edição.
+
+```
+One continuous 8-second shot, no cuts. Starts with an extreme close-up of a woman's hand gently touching a pink satin awareness ribbon pinned on her white blouse. The camera smoothly and slowly pulls back and rises, revealing her smiling, standing outdoors in a sunny city park beside a diverse group of Brazilian women of different ages and skin tones, each wearing something pink: a pink headscarf, a pink scarf, a pink blouse, pink ribbons. They smile warmly and put their arms around each other. Golden-hour light, pink and white palette, shallow depth of field, hopeful and empowering mood, photorealistic, cinematic commercial look, empty space on the right side of the frame at the end.
+```
+
 ---
 
 ## Checklist antes de publicar
